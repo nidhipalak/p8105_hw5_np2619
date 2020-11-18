@@ -24,4 +24,25 @@ scale_color_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
+## Problem 1
+
+#### Read in Data
+
+```{r}
+homicide = read_csv("./data/homicide-data.csv")
+```
+
+This dataset contains `r ncol(homicide)` variables with `r nrow(homicide)` observations.  Each homicide is distinguished by an unique id, contains basic demographic information about the victim, the location and reported date of the murder, and whether an arrest was made. 
+
+#### Create `city_state` var
+
+```{r}
+homicide %>% 
+  unite(city_state, c("city", "state"), sep = ", ") %>% 
+  filter(disposition != "Closed by arrest") %>% 
+  group_by(city_state, disposition) %>% 
+  summarize(n = n())
+```
+
+#### `prop.test` proportions
 
