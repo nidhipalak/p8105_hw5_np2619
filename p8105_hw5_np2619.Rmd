@@ -138,7 +138,7 @@ Simulation to explore power of a one sample t-test!!
 ttest_sim = function(mu) {
   sim_data = 
     tibble(
-    x = rnorm(mean = 0, n = 30, sd = 5),
+    x = rnorm(mean = mu, n = 30, sd = 5),
     )
   
   ttest = t.test(sim_data, mu = 0, alpha = 0.05)
@@ -148,6 +148,7 @@ ttest_sim = function(mu) {
     mean = ttest[["estimate"]]
   )
 }
+
 ```
  
 #### Reiterate function
@@ -156,7 +157,7 @@ ttest_sim = function(mu) {
 sim_results =
   tibble(true_mu = c(0:6)) %>% 
   mutate(
-    output_lists = map(.x = true_mu, ~rerun(5000, ttest_sim(mu = .x))),
+    output_lists = map(.x = true_mu, ~rerun(50, ttest_sim(mu = .x))),
     ttest_df = map(output_lists, bind_rows)
   ) %>% 
   select(-output_lists) %>% 
@@ -180,10 +181,11 @@ proportion =
     xlab = "true mean",
     ylab = "power"
   )
+
 proportion
 ```
 
-This outcome is very surprising to me.  I would expect mu = 6 to be rejected more and have a higher power than all the other mu's. I would expect all others to have decreasing power. I expect this because if true mu = 0 and H0: mu = 0, the likely hood of this being false in a sample of 5000 is very low, and thus the rejected/power would be a very low number.  In contrast, if true mu = 6 and it is tested against H0:mu = 0, we would expect the null to be rejected because they are not supposed to be the same, resulting in a higher power proportion. 
+I originally had a very strange outcome, but fixed my function to produce this plot, which is expected. I would expect mu = 6 to be rejected more and have a higher power than all the other mu's. I would expect all others to have decreasing power. I expect this because if true mu = 0 and H0: mu = 0, the likely hood of this being false in a sample of 5000 is very low, and thus the rejected/power would be a very low number.  In contrast, if true mu = 6 and it is tested against H0:mu = 0, we would expect the null to be rejected because they are not supposed to be the same, resulting in a higher power proportion. This plot looks like a logarithmic curve.
 
 #### avg estimate of mu on y and true mu on x
 
@@ -203,7 +205,7 @@ avg_mu =
 avg_mu
 ```
 
-This is also very unexpected. I would have assumed to see a very direct, linear relationship between the average mu and true mu.  This graph does not reflect this at all. With a normal sample size this large, we would expect to see the average average to be what is expected. 
+Again, I fixed my function and the unexpected plots were changed to what were expected: I have assumed to see a very direct, linear relationship between the average mu and true mu.  With a normal sample size this large, we would expect to see the average average to be what is expected. 
 
 #### average estimates of rejected nulls
 
@@ -226,4 +228,4 @@ avg_reject =
 avg_reject
 ```
 
-For this plot, we expect to see the average mu of the rejected nulls to increase as the true mu increases because the average of the samples should be around the inputted mu. Additionally, there would be a lot more datapoints for the higher true mu's as they were more likely to be rejected. This would make an interesting density or violin plot. 
+For this plot, we expect to see the average mu of the rejected nulls to increase as the true mu increases because the average of the samples should be around the inputted mu. Additionally, there would be a lot more datapoints for the higher true mu's as they were more likely to be rejected. This would make an interesting density or violin plot. The sample average of mu across tests for which the null is rejected approximately very slightly greater or sometimes equal to the true value of mu, with the exception of 0.  The rejected average mu is greater than the true mu. This makes sense because if the sample mu = true mu, it would not be rejected and in this plot.  Unlike mu 1-6, where the sample mu's were more likely to be rejected because they are supposed to be closer to the true mu, which is not equal to H0: mu= 0
