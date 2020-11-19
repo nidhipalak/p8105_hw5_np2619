@@ -166,7 +166,6 @@ sim_results =
 #### Proportion of null rejected (power)
 
 ```{r}
-
 proportion = 
   sim_results %>% 
   filter(pvalue < 0.05) %>% 
@@ -206,9 +205,25 @@ avg_mu
 
 This is also very unexpected. I would have assumed to see a very direct, linear relationship between the average mu and true mu.  This graph does not reflect this at all. With a normal sample size this large, we would expect to see the average average to be what is expected. 
 
-#### 
+#### average estimates of rejected nulls
 
 ```{r}
-
+avg_reject = 
+  sim_results %>% 
+  filter(pvalue < 0.05) %>% 
+  group_by(true_mu) %>% 
+  mutate(
+    rejected = n(),
+    power = rejected / 5000,
+    avg_mu = mean(mean)) %>% 
+  ggplot(aes(x = true_mu, y = avg_mu)) +
+  geom_point() +
+  labs(
+    title = "average mu of rejected nulls",
+    xlab = "true mean",
+    ylab = "average mu"
+  )
+avg_reject
 ```
 
+For this plot, we expect to see the average mu of the rejected nulls to increase as the true mu increases because the average of the samples should be around the inputted mu. Additionally, there would be a lot more datapoints for the higher true mu's as they were more likely to be rejected. This would make an interesting density or violin plot. 
