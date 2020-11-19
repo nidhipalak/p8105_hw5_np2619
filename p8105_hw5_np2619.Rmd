@@ -84,7 +84,9 @@ estimate_plot = estimate_prop %>%
   ggplot(aes(x = city_state, y = estimate, color = city_state)) +
   geom_point(alpha = 3) +
   geom_errorbar(aes(ymax = conf.high, ymin = conf.low)) +
-  theme(legend.position = "none", axis.text.x = element_text(angle = 90))
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90)) +
+  labs(title = "observations of control and experimental arms over 8 weeks"
+  )
 
 estimate_plot
 ```
@@ -124,7 +126,7 @@ study_df %>%
   geom_point(aes(color = arm)) +
   geom_path(aes(group = sub_id, color = arm))
 ```
-There are some visual differences in the control and experimental outcomes of this longitudinal study. Both control and experimental observations varied between -1.25 and 2.75.  Throughout the weeks, the experimental observations trended upwards and the control observations remained relatively the same.  The control group looks like it trended slightly downward, but it is difficult to tell whether this is the true effect, or due to a smaller sample size.
+There are some visual differences in the control and experimental outcomes of this longitudinal study. Both control and experimental observations consistently varied between -1.25 and 2.75.  Throughout the weeks, the experimental observations trended upwards and the control observations remained relatively the same.  The control group looks like it trended slightly downward, but it is difficult to tell whether this is the true effect, or due to a smaller sample size.
 
 ## Problem 3
 
@@ -161,4 +163,27 @@ sim_results =
   unnest(ttest_df)
 ```
 
-####
+#### Proportion of null rejected (power)
+
+```{r}
+
+proportion = 
+  sim_results %>% 
+  filter(pvalue < 0.05) %>% 
+  group_by(true_mu) %>% 
+  mutate(
+    rejected = n(),
+    power = rejected / 5000) %>% 
+  ggplot(aes(x = true_mu, y = power)) +
+  geom_point() +
+  labs(
+    title = "power by true mean",
+    xlab = "true mean",
+    ylab = "power"
+  )
+proportion
+```
+
+This outcome is very surprising to me.  I would expect mu = 6 to be rejected more and have a higher power than all the other mu's. I would expect all others to have decreasing power. 
+
+#### 
