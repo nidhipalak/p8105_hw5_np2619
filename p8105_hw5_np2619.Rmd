@@ -184,6 +184,31 @@ proportion =
 proportion
 ```
 
-This outcome is very surprising to me.  I would expect mu = 6 to be rejected more and have a higher power than all the other mu's. I would expect all others to have decreasing power. 
+This outcome is very surprising to me.  I would expect mu = 6 to be rejected more and have a higher power than all the other mu's. I would expect all others to have decreasing power. I expect this because if true mu = 0 and H0: mu = 0, the likely hood of this being false in a sample of 5000 is very low, and thus the rejected/power would be a very low number.  In contrast, if true mu = 6 and it is tested against H0:mu = 0, we would expect the null to be rejected because they are not supposed to be the same, resulting in a higher power proportion. 
+
+#### avg estimate of mu on y and true mu on x
+
+```{r}
+avg_mu = 
+  sim_results %>% 
+  group_by(true_mu) %>% 
+  mutate(
+    avg_mu = mean(mean)) %>% 
+  ggplot(aes(x = true_mu, y = avg_mu)) +
+  geom_point() +
+  labs(
+    title = "avg mu estimate by true mu",
+    xlab = "true mean",
+    ylab = "average mu estimate"
+  )
+avg_mu
+```
+
+This is also very unexpected. I would have assumed to see a very direct, linear relationship between the average mu and true mu.  This graph does not reflect this at all. With a normal sample size this large, we would expect to see the average average to be what is expected. 
 
 #### 
+
+```{r}
+
+```
+
