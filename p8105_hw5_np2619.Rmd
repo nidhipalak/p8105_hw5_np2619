@@ -87,6 +87,21 @@ estimate_plot = estimate_prop %>%
   theme(legend.position = "none", axis.text.x = element_text(angle = 90))
 
 estimate_plot
-
 ```
 
+## Problem 2
+
+Create a df with all the patients. 
+
+```{r}
+study_df =
+  tibble(
+    files = list.files("data/data/"),
+    path = str_c("data/data/", files)
+  ) %>% 
+  mutate(data = map(.x = path, ~read_csv(.x))) %>% 
+  unnest(data) %>% 
+  mutate(rename = str_replace(files, ".csv", "")) %>% 
+  separate(rename, into = c("con_exp", "sub_num"), sep = 3) %>% 
+  mutate(sub_num = str_replace(sub_num, "_", "")) 
+```
